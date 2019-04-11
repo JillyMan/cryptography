@@ -1,0 +1,1 @@
+file edit view project build debug test analyze tools extensions window help search visual studio (Ctrl + Q)
