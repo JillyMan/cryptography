@@ -15,7 +15,6 @@ namespace ChiffreDeVigenère.Window
 	public partial class Window : Form
 	{
 		private readonly string SPECIFY_KEY = "Specify key!";
-		private readonly string SPECIFY_SHIFT = "Specify shift!";
 		private readonly string SPECIFY_TEXT = "Specify text!";
 
 		private IChiffre _chiffre;
@@ -25,36 +24,26 @@ namespace ChiffreDeVigenère.Window
 			InitializeComponent();
 			_chiffre = chiffre;
 			EncryptRadioButton.Checked = true;
-			//TextBox.Text = "ATTACKATDAWN";
-			//KeyBox.Text = "LEMON";
 		}
 
-		private void ValidateInput()
+		private string ValidateInput()
 		{
 			if (string.IsNullOrEmpty(KeyBox.Text))
 			{
-				throw new Exception(SPECIFY_KEY);
+				return SPECIFY_KEY;
 			}
 
 			if (string.IsNullOrEmpty(TextBox.Text))
 			{
-				throw new Exception(SPECIFY_TEXT);
+				return SPECIFY_TEXT;
 			}
 
-			SetError(string.Empty);
+			return string.Empty;
 		}
 
 		private async void CalculateButton_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				ValidateInput();
-			}
-			catch(Exception ex)
-			{
-				SetError(ex.Message);
-				return;
-			}
+			SetError(ValidateInput());
 
 			if (EncryptRadioButton.Checked)
 			{
@@ -68,19 +57,16 @@ namespace ChiffreDeVigenère.Window
 
 		private async Task TryEncrypt()
 		{
-			var encriptingText = TextBox.Text;
-			var encriptingKey = KeyBox.Text;
-
-			var result = await _chiffre.Encrypt(encriptingText, encriptingKey);
-			ResultTextBox.Text = result;
+			SetResult(await _chiffre.Encrypt(TextBox.Text, KeyBox.Text));
 		}
 
 		private async Task TryDecrypt()
 		{
-			var encriptedText = TextBox.Text;
-			var decriptingKey = KeyBox.Text;
+			SetResult(await _chiffre.Decrypt(TextBox.Text, KeyBox.Text));
+		}
 
-			var result = await _chiffre.Decrypt(encriptedText, decriptingKey);
+		private void SetResult(string result)
+		{
 			ResultTextBox.Text = result;
 		}
 
